@@ -347,7 +347,6 @@ make_noise_art(frequency = 20)
 
 # Vary the palette
 make_noise_art(palette = c("white", "black"))
-#make_noise_art(palette = sample_canva(seed = 123))
 
 # Vary the generator
 make_noise_art(generator = gen_perlin)
@@ -407,8 +406,99 @@ fractal_art <- function(fractal, generator, palette = NULL, ...) {
 }
 
 
-fractal_art(billow, gen_worley, seed = 6, octaves = 98)
-fractal_art(billow, gen_worley, seed = 6, octaves = 11)
-fractal_art(billow, gen_worley, seed = 6, octaves = 2)
+fractal_art(billow, gen_worley, seed = 5, octaves = 4)
+fractal_art(billow, gen_worley, seed = 11, octaves = 11)
+fractal_art(billow, gen_worley, seed = 2, octaves = 2)
 ```
 
+#Putting it all together
+I'm gonna make a smiling face
+```{r}
+# Define eye colors
+eye_colors <- c(
+  "amber"   = "#FFC300",   # Vibrant Amber
+  "blue"    = "#00A8FF",   # Vibrant Blue
+  "brown"   = "#A0522D",   # Vibrant Brown
+  "gray"    = "#808080",   # Gray
+  "green"   = "#00FF00",   # Vibrant Green
+  "hazel"   = "#FFA500"    # Vibrant Hazel
+)
+
+# Generate a piece using the fun palette
+Left <- fractal_art(fbm, gen_simplex, freq_init = 0.01, octaves = 15, seed = 1738, palette = eye_colors)
+
+Right <- fractal_art(fbm, gen_simplex, freq_init = 0.01, octaves = 15, seed = 4269, palette = eye_colors)
+
+# Define lip colors
+lip_colors <- c(
+  "nude"     = "#E6B8A2",   # Nude
+  "pink"     = "#FFB6C1",   # Pink
+  "red"      = "#FF0000",   # Red
+  "berry"    = "#800080",   # Berry
+  "coral"    = "#FF7F50",   # Coral
+  "plum"     = "#DDA0DD"    # Plum
+)
+
+make_noise_art <- function(generator) {
+  fractal_art(fbm, generator, freq_init = 0.01, octaves = 15, seed = 5, palette = lip_colors)
+}
+
+Curl <- make_noise_art(gen_waves)
+Brush <- make_noise_art(generator = gen_perlin)
+
+#skin tones palette
+skin_tones <- c(
+  "olive"           = "#B3A28F",
+  "medium_tan"      = "#D3B18B",
+  "warm_beige"      = "#E3C8A1",
+  "golden_brown"    = "#D6A679",
+  "rich_brown"      = "#9D7B5A",
+  "deep_caramel"    = "#7C5B4E"
+)
+
+# Create a spatial noise pattern
+pattern_canvas <- blank_canvas %>%
+  mutate(
+    noise1 = gen_perlin(x, y, frequency = 13),
+    noise2 = gen_perlin(x, y, frequency = 35),
+    noise3 = gen_perlin(x, y, frequency = 55),
+    paint = (noise1 + noise2 + noise3) / 3
+  )
+
+# Plot the spatial noise pattern using the skin_tones palette
+Face <- plot_painted_canvas(pattern_canvas, palette = skin_tones)
+```
+
+
+```{r}
+library(cowplot)
+
+# Create the plot objects
+plot_face <- ggdraw() + draw_plot(Face) + theme(plot.margin = margin(0))
+plot_left <- ggdraw() + draw_plot(Left) + theme(plot.margin = margin(0))
+plot_right <- ggdraw() + draw_plot(Right) + theme(plot.margin = margin(0))
+plot_curl <- ggdraw() + draw_plot(Curl) + theme(plot.margin = margin(0))
+plot_brush <- ggdraw() + draw_plot(Brush) + theme(plot.margin = margin(0))
+
+# Arrange the plots in a grid with reduced vertical spacing between columns
+grid <- plot_grid(
+  plot_face, plot_face, plot_face, plot_face, plot_face, plot_face,
+  plot_face, plot_left, plot_face, plot_face, plot_right, plot_face,
+  plot_face, plot_face, plot_face, plot_face, plot_face, plot_face,
+  plot_face, plot_curl, plot_brush, plot_brush, plot_curl, plot_face,
+  plot_face, plot_curl, plot_brush, plot_brush, plot_curl, plot_face,
+  plot_face, plot_face, plot_face, plot_face, plot_face, plot_face,
+  nrow = 6, ncol = 6,
+  rel_heights = c(1, 0.8, 1, 1, 0.8, 1)  # Adjust the relative heights
+)
+
+# Display the grid
+grid
+
+
+```
+
+#Reflection
+
+
+I enjoyed exploring how code in R can be used to enhance artistic capabilities. It was fascinating to see the different ways in which coding techniques can create beautiful visual designs. However, personally, I prefer physically drawing with a pen because I like the feeling of it. Multimedia art using code was unfamiliar and a little scary at first. But in the end, it was fun to experiment with different types of plots and visualizations. While I still prefer traditional art forms, I appreciate the precision and complexity that coding can bring to artistic compositions. Overall, it was a valuable experience that reminded me to embrace new technologies and continue evolving as an artist. Playing with the random aspects of it is very fun as it added a layer of variablitity I wasnt used to.

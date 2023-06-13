@@ -1,0 +1,108 @@
+---
+title: "choyoa_3_3"
+author: "Jacob Coggshall"
+date: "2023-06-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Exercise 1
+```{r}
+library(ggplot2)
+library(tibble)
+
+# Load the mpg dataset
+data(mpg)
+
+# Create a scatterplot with customized aesthetics
+ggplot(mpg, aes(x = cty, y = hwy, color = manufacturer, size = displ)) +
+  geom_point(size = 2) + 
+  theme_void() + 
+  theme()
+```
+
+Exercise 2
+```{r}
+polar_art <- function(seed, n, palette) {
+  
+  # set the state of the random number generator
+  set.seed(seed)
+  
+  # data frame containing random values for 
+  # aesthetics to use in the art
+  dat <- tibble(
+    x0 = runif(n),
+    y0 = runif(n),
+    x1 = x0 + runif(n, min = -.2, max = .2),
+    y1 = y0 + runif(n, min = -.2, max = .2),
+    shade = runif(n), 
+    size = runif(n)
+  )
+  
+  # plot segments in various colours, using 
+  # polar coordinates and a gradient palette
+  dat |> 
+    ggplot(aes(
+      x = x0,
+      y = y0,
+      xend = x1,
+      yend = y1,
+      colour = shade,
+      size = size
+    )) +
+    geom_segment(show.legend = FALSE) +
+    coord_polar() +
+    scale_y_continuous(expand = c(0, 0)) +
+    scale_x_continuous(expand = c(0, 0)) + 
+    scale_colour_gradientn(colours = palette) + 
+    scale_size(range = c(0, 10)) + 
+    theme_void()
+}
+
+# Define a fun palette
+fun_palette <- c("#FF4081", "#FFC107", "#8BC34A", "#03A9F4", "#9C27B0")
+
+# Set the seed for reproducibility
+seed <- 7829
+
+# Generate a piece using the fun palette
+polar_art(seed, n = 200, palette = fun_palette)
+
+polar_art <- function(seed, n, palette) {
+  set.seed(seed)  # Set the seed for reproducibility
+  
+  # Generate random coordinates for the polar art
+  x <- runif(n, min = -1, max = 1)
+  y <- runif(n, min = -1, max = 1)
+  
+  # Plot the polar art
+  plot(x, y,
+       col = palette,
+       pch = 19,
+       xlim = c(-1, 1), ylim = c(-1, 1),
+       xlab = "", ylab = "",
+       main = NA,
+       axes = "n")
+}
+
+
+# Save the modified polar_art() function in the "polar_art_02.R" file
+file_path <- "polar_art_02.R"
+writeLines(deparse(polar_art), file_path)
+
+
+# Load the modified polar_art() function from the "polar_art_02.R" file
+source("polar_art_02.R")
+
+# Generate and display the custom polar art with a random seed and custom palette
+seed <- sample(1:1000, 1)  # Randomly select a seed from 1 to 1000
+
+polar_art(seed, 7000, fun_palette)
+
+
+```
+We might be naming the function as a second version in an art context because it we are going for random art, and if we forget which function does which design in the plot, that just adds to the randomness and beauty of the function as a whole.
+

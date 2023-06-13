@@ -85,7 +85,7 @@ polar_art <- function(seed, n, palette) {
        xlim = c(-1, 1), ylim = c(-1, 1),
        xlab = "", ylab = "",
        main = NA,
-       axes = "n")
+       axes = FALSE)
 }
 
 
@@ -100,9 +100,102 @@ source("polar_art_02.R")
 # Generate and display the custom polar art with a random seed and custom palette
 seed <- sample(1:1000, 1)  # Randomly select a seed from 1 to 1000
 
-polar_art(seed, 7000, fun_palette)
+polar_art(seed, n = 7000, palette = fun_palette)
 
 
 ```
 We might be naming the function as a second version in an art context because it we are going for random art, and if we forget which function does which design in the plot, that just adds to the randomness and beauty of the function as a whole.
+
+Exercise 3
+```{r}
+# Define the sample_canva() function
+sample_canva <- function() {
+  # Generate a sample color palette
+  palette <- c("#FF4081", "#536DFE", "#FFD740", "#1DE9B6", "#9C27B0")
+  return(palette)
+}
+
+# Generate a color palette using sample_canva()
+pal_ette <- sample_canva()
+
+
+```
+
+
+```{r}
+sample_named_colours <- function(n) {
+  # Get the set of distinct named colours
+  all_colours <- colours(distinct = TRUE)
+  
+  # Sample n distinct colours
+  sampled_colours <- sample(all_colours, size = n)
+  
+  return(sampled_colours)
+}
+
+# Define the polar_art() function
+polar_art <- function(seed, n, color_palette) {
+  set.seed(seed)  # Set the seed for reproducibility
+  
+  # Generate random coordinates for the polar art
+  x <- runif(n, min = -1, max = 1)
+  y <- runif(n, min = -1, max = 1)
+  
+  # Plot the polar art using ggplot2
+  data <- data.frame(x = x, y = y, color = color_palette)
+  
+  ggplot(data, aes(x = x, y = y)) +
+    geom_point(size = 3, shape = 16, aes(color = color)) +
+    scale_color_identity() +
+    theme_void()
+}
+
+# Set the seed for reproducibility
+seed <- 123
+
+# Generate a random palette of 5 named colors
+num_colors <- 5
+color_palette <- sample_named_colours(num_colors)
+
+# Generate and display the polar art using the random palette
+polar_art(seed, n = 500, color_palette = color_palette)
+```
+
+```{r}
+sample_canva_palette <- function(n) {
+  # Get the set of distinct colors from ggthemes::canva_palettes
+  all_colors <- unlist(ggthemes::canva_palettes)
+  
+  # Sample n distinct colors randomly
+  sampled_colors <- sample(all_colors, size = n)
+  
+  return(sampled_colors)
+}
+
+#Generate a random palette of 5 colors
+num_colors <- 5
+random_palette <- sample_canva_palette(num_colors)
+print(random_palette)
+```
+
+Exercise 3
+
+```{r}
+#Copying functions due to R not cooperating
+
+sample_data <- function(seed = NULL, n = 100){
+  if(!is.null(seed)) set.seed(seed)
+  dat <- tibble(
+    x0 = runif(n),
+    y0 = runif(n),
+    x1 = x0 + runif(n, min = -.2, max = .2),
+    y1 = y0 + runif(n, min = -.2, max = .2),
+    shade = runif(n), 
+    size = runif(n),
+    shape = factor(sample(0:22, size = n, replace = TRUE))
+  )
+}
+
+
+```
 
